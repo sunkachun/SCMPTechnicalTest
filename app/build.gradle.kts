@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.scmptechinicaltest"
+    namespace = "com.example.scmptechnicaltest"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.scmptechinicaltest"
+        applicationId = "com.example.scmptechnicaltest"
         minSdk = 30
         targetSdk = 36
         versionCode = 1
@@ -32,6 +32,11 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+    android {
+        buildFeatures {
+            viewBinding = true
+        }
     }
 }
 

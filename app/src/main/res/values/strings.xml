@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">SCMPTechnicalTest</string>
+
+    <!-- Login Page -->
+    <string name="app_login_title">LOGIN</string>
+    <string name="app_login_email_address">Email Address</string>
+    <string name="app_login_password">Password</string>
+    <string name="app_login_login">Log In</string>
+    <string name="app_login_logging_in">Logging in…</string>
+    <string name="app_login_error_invalid_credentials">Error: invalid credentials</string>
+    <string name="app_login_ok">OK</string>
+
+    <!-- Staff Directory -->
+    <string name="staff_directory_token">Token: %s</string>
+    <string name="staff_directory_load_more">Load More</string>
 </resources>

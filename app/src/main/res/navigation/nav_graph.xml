@@ -8,4 +8,13 @@
         android:id="@+id/loginFragment"
         android:name="com.example.scmptechnicaltest.login.LoginFragment"
         android:label="Login" />
+
+    <fragment
+        android:id="@+id/staffDirectoryFragment"
+        android:name="com.example.scmptechnicaltest.staff.StaffDirectoryFragment"
+        android:label="Staff Directory" >
+        <argument
+            android:name="token"
+            app:argType="string" />
+    </fragment>
 </navigation>
