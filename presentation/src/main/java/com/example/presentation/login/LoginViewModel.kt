@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.login.model.LoginRequest
 import com.example.domain.login.usecase.Login
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LoginViewModel(private val loginUseCase: Login) : ViewModel() {
 
@@ -15,13 +17,11 @@ class LoginViewModel(private val loginUseCase: Login) : ViewModel() {
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     fun login(email: String, password: String) {
-        // Email validation
         if (!isValidEmail(email)) {
             _uiState.value = LoginUiState.Error("Please enter a valid email address")
             return
         }
 
-        // Password validation
         val passwordValidation = validatePassword(password)
         if (!passwordValidation.isValid) {
             _uiState.value = LoginUiState.Error(passwordValidation.errorMessage ?: "Invalid password")
@@ -33,8 +33,15 @@ class LoginViewModel(private val loginUseCase: Login) : ViewModel() {
         viewModelScope.launch {
             try {
                 val request = LoginRequest(email, password)
-                val response = loginUseCase.execute(request)
-                _uiState.value = LoginUiState.Success(response.token)
+                val response = withContext(Dispatchers.IO) {
+                    loginUseCase.execute(request)
+                }
+                if (response.error == null) {
+                    _uiState.value = LoginUiState.Success(response.token)
+                } else {
+                    _uiState.value = LoginUiState.Error("Login failed: ${response.error ?: "Unknown error"}")
+                }
+
             } catch (e: Exception) {
                 _uiState.value = LoginUiState.Error("Login failed: ${e.message ?: "Unknown error"}")
             }
@@ -48,7 +55,6 @@ class LoginViewModel(private val loginUseCase: Login) : ViewModel() {
     private fun isValidEmail(email: String): Boolean {
         if (email.isBlank()) return false
 
-        // 簡單的郵箱驗證規則
         val emailPattern = "[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
         return email.matches(emailPattern.toRegex())
     }
