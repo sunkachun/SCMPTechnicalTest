@@ -1,33 +1,35 @@
 package com.example.presentation.staff
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.staff.usecase.GetStaff
 import com.example.presentation.staff.mapper.StaffMapper
 import com.example.presentation.staff.model.StaffDisplayModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class StaffViewModel(private val getStaff: GetStaff, private val mapper: StaffMapper) : ViewModel() {
 
-    private val _staffList = MutableLiveData<List<StaffDisplayModel>>(emptyList())
-    val staffList: LiveData<List<StaffDisplayModel>> = _staffList
+    private val _staffList = MutableStateFlow<List<StaffDisplayModel>>(emptyList())
+    val staffList: StateFlow<List<StaffDisplayModel>> = _staffList.asStateFlow()
 
-    private val _hasMore = MutableLiveData(true)
-    val hasMore: LiveData<Boolean> = _hasMore
+    private val _hasMore = MutableStateFlow(true)
+    val hasMore: StateFlow<Boolean> = _hasMore.asStateFlow()
 
-    private val _currentPage = MutableLiveData(0)
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
 
-    private val _error = MutableLiveData<String?>()
-    val error: LiveData<String?> = _error
+    private var currentPage = 0
 
     fun loadInitial() {
-        _currentPage.value = 0
+        currentPage = 0
         _hasMore.value = true
         _staffList.value = emptyList()
+        _error.value = null
         loadData()
     }
 
@@ -37,21 +39,26 @@ class StaffViewModel(private val getStaff: GetStaff, private val mapper: StaffMa
 
     private fun loadData() {
         viewModelScope.launch {
-            val currentPage = (_currentPage.value ?: 0) + 1
+            val nextPage = currentPage + 1
 
-            val response = withContext(Dispatchers.IO) {
-                getStaff.execute(currentPage)
-            }
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    getStaff.execute(nextPage)
+                }
 
-            if (response.data.isNotEmpty()) {
-                val newData = mapper.mapToStaffDisplayModel(response.data)
-                val currentList = _staffList.value.orEmpty()
-                _staffList.value = currentList + newData
-                _hasMore.value = response.totalPages != currentPage
-                _currentPage.value = currentPage
-                _error.value = null
-            } else {
-                _error.value = "Empty List"
+                if (response.data.isNotEmpty()) {
+                    val newData = mapper.mapToStaffDisplayModel(response.data)
+                    val currentList = _staffList.value
+                    _staffList.value = currentList + newData
+                    _hasMore.value = response.totalPages > nextPage
+                    currentPage = nextPage
+                    _error.value = null
+                } else {
+                    _error.value = "Empty List"
+                    _hasMore.value = false
+                }
+            } catch (e: Exception) {
+                _error.value = "Load Fail: ${e.message}"
             }
         }
     }

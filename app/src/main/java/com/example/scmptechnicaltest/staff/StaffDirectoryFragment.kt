@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.scmptechnicaltest.R
 import com.example.scmptechnicaltest.databinding.FragmentStaffDirectoryBinding
 import com.example.presentation.staff.StaffViewModel
 import com.example.scmptechnicaltest.staff.adapter.StaffAdapter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlin.getValue
 
 class StaffDirectoryFragment : Fragment() {
@@ -51,18 +54,24 @@ class StaffDirectoryFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.staffList.observe(viewLifecycleOwner) { staffList ->
-            adapter.submitList(staffList)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.staffList.collectLatest { staffList ->
+                adapter.submitList(staffList)
+            }
         }
 
-        viewModel.hasMore.observe(viewLifecycleOwner) { hasMore ->
-            binding.btnLoadMore.visibility = if (hasMore == true) View.VISIBLE else View.GONE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.hasMore.collectLatest { hasMore ->
+                binding.btnLoadMore.visibility = if (hasMore) View.VISIBLE else View.GONE
+            }
         }
 
-        viewModel.error.observe(viewLifecycleOwner) { error ->
-            if (error != null) {
-                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                viewModel.resetError()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.error.collectLatest { error ->
+                if (error != null) {
+                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                    viewModel.resetError()
+                }
             }
         }
     }
