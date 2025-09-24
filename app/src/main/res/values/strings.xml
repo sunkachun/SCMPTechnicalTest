@@ -11,6 +11,7 @@
     <string name="app_login_ok">OK</string>
 
     <!-- Staff Directory -->
+    <string name="staff_directory_staff_list">Staff List</string>
     <string name="staff_directory_token">Token: %s</string>
     <string name="staff_directory_load_more">Load More</string>
 </resources>
