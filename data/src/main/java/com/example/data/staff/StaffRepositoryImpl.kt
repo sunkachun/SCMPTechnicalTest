@@ -1,9 +1,8 @@
 package com.example.data.staff
 
-import android.util.Log
 import com.example.data.util.ApiUtil
-import com.example.domain.staff.model.StaffListResponse
 import com.example.domain.staff.model.Staff
+import com.example.domain.staff.model.StaffListResponse
 import com.example.domain.staff.repository.StaffRepository
 import org.json.JSONObject
 import java.io.BufferedReader

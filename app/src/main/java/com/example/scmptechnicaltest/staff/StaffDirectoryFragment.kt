@@ -30,7 +30,7 @@ class StaffDirectoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val token = arguments?.getString("token") ?: return // Handle null
+        val token = arguments?.getString("token") ?: return
 
         binding.tvToken.text = getString(R.string.staff_directory_token, token)
 

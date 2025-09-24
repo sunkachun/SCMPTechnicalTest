@@ -39,7 +39,7 @@ class LoginFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     when (state) {
                         is LoginUiState.Idle -> {
-                            binding.progressLoading.visibility = View.GONE // Assume progressBar exists in layout for loading indicator
+                            binding.progressLoading.visibility = View.GONE
                             binding.btnLogin.isEnabled = true
                             binding.tvError.visibility = View.GONE
                             binding.btnErrorOk.visibility = View.GONE

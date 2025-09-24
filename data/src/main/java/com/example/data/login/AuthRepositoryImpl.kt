@@ -1,7 +1,6 @@
 package com.example.data.login
 
-import android.net.Uri
-import android.util.Log
+import androidx.core.net.toUri
 import com.example.data.util.ApiUtil
 import com.example.domain.login.model.LoginRequest
 import com.example.domain.login.model.LoginResponse
@@ -12,7 +11,6 @@ import java.io.InputStreamReader
 import java.io.OutputStream
 import java.net.HttpURLConnection
 import java.net.URL
-import androidx.core.net.toUri
 
 class AuthRepositoryImpl : AuthRepository {
     override suspend fun login(request: LoginRequest): LoginResponse {

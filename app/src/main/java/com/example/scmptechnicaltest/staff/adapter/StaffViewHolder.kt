@@ -1,8 +1,6 @@
 package com.example.scmptechnicaltest.staff.adapter
 
 import android.graphics.BitmapFactory
-import android.util.Log
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.example.presentation.staff.model.StaffDisplayModel
 import com.example.scmptechnicaltest.R
@@ -26,7 +24,7 @@ class StaffViewHolder(private val binding: ItemStaffBinding) : RecyclerView.View
             try {
                 val url = URL(image)
                 val connection = url.openConnection() as HttpURLConnection
-                connection.connectTimeout = 5000 // 5 seconds timeout
+                connection.connectTimeout = 5000
                 connection.readTimeout = 5000
                 connection.doInput = true
                 connection.connect()
