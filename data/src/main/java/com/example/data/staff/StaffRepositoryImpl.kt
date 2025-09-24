@@ -1,5 +1,6 @@
 package com.example.data.staff
 
+import android.util.Log
 import com.example.data.util.ApiUtil
 import com.example.domain.staff.model.StaffListResponse
 import com.example.domain.staff.model.Staff
@@ -16,6 +17,7 @@ class StaffRepositoryImpl : StaffRepository {
         val conn = url.openConnection() as HttpURLConnection
         conn.requestMethod = "GET"
         conn.setRequestProperty("Content-Type", "application/json")
+        conn.setRequestProperty("x-api-key", "reqres-free-v1")
 
         if (conn.responseCode == HttpURLConnection.HTTP_OK) {
             val input = BufferedReader(InputStreamReader(conn.inputStream))
